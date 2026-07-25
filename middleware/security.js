@@ -1,21 +1,25 @@
-// Middleware: Custom API Key Authentication
 export const authenticateApiKey = (req, res, next) => {
-    const apiKey = req.headers['x-api-key'];
+    // Express automatically lowercases header keys
+    const clientKey = req.headers['x-api-key'] || req.headers['secret-api-key'];
 
-    // Expected key for testing
-    if (apiKey && apiKey === 'secret-api-key') {
+    // Retrieve valid keys from .env
+    const validKeys = [
+        process.env.X_API_KEY,
+        process.env.SECRET_API_KEY
+    ];
+
+    if (clientKey && validKeys.includes(clientKey)) {
         return next();
     }
 
     return res.status(401).json({
         success: false,
-        message: 'Unauthorized: Missing or invalid X-API-KEY header.'
+        message: 'Unauthorized: Missing or invalid API key.'
     });
 };
 
-// Middleware: Task Request Input Validation
 export const validateTaskInput = (req, res, next) => {
-    const { title, status } = req.body;
+    const { title, status } = req.body || {};
 
     if (!title || typeof title !== 'string' || title.trim() === '') {
         return res.status(400).json({
