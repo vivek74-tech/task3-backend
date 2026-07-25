@@ -3,8 +3,9 @@ import cors from 'cors';
 import helmet from 'helmet';
 import taskRoutes from './routes/taskRoutes.js';
 import { authenticateApiKey } from './middleware/security.js';
-
+import dotenv from "dotenv"
 const app = express();
+dotenv.config()
 const PORT = process.env.PORT || 3000;
 
 // Security and utility middleware
